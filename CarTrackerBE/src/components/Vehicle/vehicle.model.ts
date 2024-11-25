@@ -2,23 +2,32 @@ import { Model, DataTypes } from 'sequelize'
 import { Database } from '../../config/database'
 import { isStringValidation } from '../../utils/isStringValidation'
 
-class User extends Model {
+class Vehicle extends Model {
   public id!: number
+  public userId!: number
   public name!: string
-  public email!: string
-  public password!: string
-  public role!: string | null
+  public licensePlate!: string
+  public yearOfManufacture!: number
   public image!: Buffer | null
-  public created!: Date
+  public inspectionExpiry!: Date
 }
 
-User.init(
+Vehicle.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
+    },
+    userId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
     },
     name: {
       type: DataTypes.STRING(255),
@@ -28,46 +37,40 @@ User.init(
         isString: isStringValidation,
       },
     },
-    email: {
-      type: DataTypes.STRING(255),
+    licensePlate: {
+      type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
       validate: {
-        len: [0, 255],
+        len: [0, 50],
         isString: isStringValidation,
-        isEmail: true,
       },
     },
-    password: {
-      type: DataTypes.STRING(255),
+    yearOfManufacture: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       validate: {
-        len: [0, 255],
-        isString: isStringValidation,
-      },
-    },
-    role: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      validate: {
-        len: [0, 255],
+        isInt: true,
+        min: 1886, // Oldest cars
       },
     },
     image: {
       type: DataTypes.BLOB('long'),
       allowNull: true,
     },
-    created: {
+    inspectionExpiry: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: true,
+      allowNull: false,
+      validate: {
+        isDate: true,
+      },
     },
   },
   {
     sequelize: Database.getInstance(),
-    tableName: 'User',
+    tableName: 'Vehicle',
     timestamps: false,
   }
 )
 
-export default User
+export default Vehicle
