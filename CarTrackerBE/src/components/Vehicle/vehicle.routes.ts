@@ -8,3 +8,5 @@ vehicleRouter.get('/:id', VehicleService.getVehicleById)
 vehicleRouter.post('/', VehicleService.createVehicle)
 vehicleRouter.patch('/:id', VehicleService.updateVehicle)
 vehicleRouter.delete('/:id', VehicleService.deleteVehicle)
+vehicleRouter.get('/:id/inspection-days', VehicleService.getInspectionDays)
+
