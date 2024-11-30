@@ -1,9 +1,12 @@
+import { Op } from 'sequelize'
+import { differenceInDays } from 'date-fns'
 import Vehicle from './vehicle.model'
 import { ResultPromise } from '../../types/common.types'
 import type Express from 'express'
 import { getErrorMessageFromSequelize } from '../../utils/getErrorMessageFromSequelize'
 import { ValidationError } from 'sequelize'
 import { ERROR_PREFIXES } from '../../constants/errorPrefixes'
+
 
 export const VehicleService = {
   getAllVehicles: async (req: Express.Request, res: Express.Response) => {
@@ -120,6 +123,46 @@ export const VehicleService = {
           getErrorMessageFromSequelize(
             error,
             `Error deleting vehicle`,
+            ERROR_PREFIXES.VEHICLE
+          )
+        )
+    }
+  },
+
+  getInspectionDays: async (req: Express.Request, res: Express.Response) => {
+    try {
+      const { id } = req.params
+      const vehicle = await Vehicle.findByPk(id)
+
+      if (!vehicle) {
+        return res.status(404).send({ message: `${ERROR_PREFIXES.VEHICLE} Vehicle not found` })
+      }
+
+      const inspectionExpiry = vehicle.getDataValue('inspectionExpiry')
+      if (!inspectionExpiry) {
+        return res.status(400).send({ message: `${ERROR_PREFIXES.VEHICLE} Inspection expiry date not found` })
+      }
+
+      const today = new Date()
+      const expiryDate = new Date(inspectionExpiry)
+      const daysDifference = differenceInDays(expiryDate, today)
+
+      let message
+      if (daysDifference >= 0) {
+        message = `There are ${daysDifference} days left until the inspection expires`
+      } else {
+        message = `The inspection expired ${Math.abs(daysDifference)} days ago`
+      }
+
+      return res.send({ message, daysDifference })
+    } catch (error: ValidationError | any) {
+      console.error('[VEHICLE_ERROR]VehicleService.getInspectionDays', error)
+      return res
+        .status(400)
+        .send(
+          getErrorMessageFromSequelize(
+            error,
+            `Error fetching inspection days`,
             ERROR_PREFIXES.VEHICLE
           )
         )

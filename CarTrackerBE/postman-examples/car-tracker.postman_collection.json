@@ -1,16 +1,19 @@
 {
 	"info": {
-		"_postman_id": "e1510f15-753e-4a26-82fa-2b754f4a27ee",
+		"_postman_id": "5bfb8d20-00df-4bcf-8569-bfa075ab8dc1",
 		"name": "car-tracker",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "372204"
+		"_exporter_id": "26653902"
 	},
 	"item": [
 		{
 			"name": "New Request",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": ""
+				}
 			},
 			"response": []
 		},
@@ -18,7 +21,10 @@
 			"name": "vehicle (list all)",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": ""
+				}
 			},
 			"response": []
 		},
@@ -163,6 +169,14 @@
 						"login"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
 			},
 			"response": []
 		}
